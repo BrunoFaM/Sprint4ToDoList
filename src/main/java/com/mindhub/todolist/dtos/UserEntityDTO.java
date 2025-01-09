@@ -7,11 +7,11 @@ import java.util.List;
 
 public class UserEntityDTO {
 
-    private Long id;
+    private final Long id;
 
-    private String username, email;
+    private final String username, email;
 
-    private List<TaskDTO> tasks;
+    private final List<TaskDTO> tasks;
 
     public UserEntityDTO(UserEntity user) {
         id = user.getId();
@@ -31,15 +31,12 @@ public class UserEntityDTO {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public List<TaskDTO> getTasks() {
+        return tasks;
     }
 }

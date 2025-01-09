@@ -1,15 +1,12 @@
 package com.mindhub.todolist.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class Task {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title, description;
@@ -65,6 +62,8 @@ public class Task {
     public void setUser(UserEntity user) {
         this.userEntity = user;
     }
+
+
 
     @Override
     public String toString() {

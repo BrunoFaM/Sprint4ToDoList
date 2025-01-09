@@ -21,7 +21,7 @@ public class TodolistApplication {
 	CommandLineRunner initData(UserEntityRepository userEntityRepository, TaskRepository taskRepository){
 		return args -> {
 
-			UserEntity user1 = new UserEntity();
+			UserEntity user1 = new UserEntity("el 10", "dwadawd", "ewdawd");
 			UserEntity user2 = new UserEntity("Niki", "din42848790", "brunomoron56@gmail.com");
 			Task t1 = new Task("Clean", "clean the setup", TaskStatus.COMPLETED);
 			Task t2 = new Task("Cook", "I need to eat to program better", TaskStatus.PENDING);

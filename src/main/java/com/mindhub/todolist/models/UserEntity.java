@@ -1,9 +1,7 @@
 package com.mindhub.todolist.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import com.mindhub.todolist.dtos.UserEntityDTO;
+import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -13,7 +11,7 @@ import java.util.Set;
 public class UserEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String username, password, email;
@@ -29,6 +27,7 @@ public class UserEntity {
         this.password = password;
         this.email = email;
     }
+
 
     public Long getId() {
         return id;
