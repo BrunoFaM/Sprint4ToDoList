@@ -1,10 +1,9 @@
 package com.mindhub.todolist.controllers;
 
 import com.mindhub.todolist.dtos.TaskDTO;
-import com.mindhub.todolist.models.Task;
-import com.mindhub.todolist.models.UserEntity;
-import com.mindhub.todolist.repositories.TaskRepository;
 import com.mindhub.todolist.repositories.UserEntityRepository;
+import com.mindhub.todolist.services.TaskService;
+import com.mindhub.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,71 +15,61 @@ import java.util.List;
 @RequestMapping("/tasks")
 public class TaskController {
 
-    @Autowired
-    private TaskRepository taskRepository;
 
     @Autowired
-    private UserEntityRepository userEntityRepository;
+    private TaskService taskService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public ResponseEntity<?> getAllTasks(){
-
-        List<TaskDTO> tasks = taskRepository
-                .findAll()
-                .stream()
-                .map( task -> new TaskDTO(task))
-                .toList();
-
+        List<TaskDTO> tasks = taskService.getAllTasks();
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
     // I can pass the id for a path variable
+    // i can extract more logic from here
+    // user not enlaced
     @PostMapping("/{id}")
     public ResponseEntity<?> createTask(@PathVariable Long id,@RequestBody TaskDTO taskDTO){
-        Task task = new Task(taskDTO.getTitle(), taskDTO.getDescription(),taskDTO.getStatus());
-        UserEntity user = userEntityRepository.findById(id).orElse(null);
-        if (user == null){
+        //UserEntity user = userService.findUserById(id);
+        if (!userService.userExistById(id)){
             return new ResponseEntity<>("User not find", HttpStatus.BAD_REQUEST);
         }
-        user.addTask(task);
-        taskRepository.save(task);
-        return new ResponseEntity<>(new TaskDTO(task), HttpStatus.CREATED);
+        return new ResponseEntity<>(taskService.createTask(taskDTO), HttpStatus.CREATED);
 
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTaskById(@PathVariable Long id){
 
-        if (!taskRepository.existsById(id)){
+        if (!taskService.taskExistById(id)){
             return new ResponseEntity<>("Not found", HttpStatus.BAD_REQUEST);
         }
 
-        Task task = taskRepository.findById(id).orElse(null);
+        TaskDTO task = taskService.getTaskById(id);
 
-        return new ResponseEntity<>(new TaskDTO(task), HttpStatus.OK);
+        return new ResponseEntity<>(task, HttpStatus.OK);
     }
-
+    // only works with all the attributes
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTaskById(@PathVariable Long id, @RequestBody TaskDTO taskDTO){
-        Task task = taskRepository.findById(id).orElse(null);
-        if(task == null){
+        if(!taskService.taskExistById(id)){
             return new ResponseEntity<>("Task not found", HttpStatus.BAD_REQUEST);
         }
-        task.setTitle(taskDTO.getTitle());
-        task.setDescription(taskDTO.getDescription());
-        task.setTaskStatus(taskDTO.getStatus());
 
-        taskRepository.save(task);
+        TaskDTO task = taskService.updateTaskById(id, taskDTO);
 
-        return new ResponseEntity<>(new TaskDTO(task), HttpStatus.OK);
+        return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTaskById(@PathVariable Long id){
-        if (!taskRepository.existsById(id)){
+        if (!taskService.taskExistById(id)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        taskRepository.deleteById(id);
+        taskService.deleteTaskById(id);
         return new ResponseEntity<>(HttpStatus.GONE);
 
     }

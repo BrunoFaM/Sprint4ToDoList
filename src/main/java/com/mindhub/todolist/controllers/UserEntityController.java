@@ -4,6 +4,7 @@ import com.mindhub.todolist.dtos.NewUser;
 import com.mindhub.todolist.dtos.UserEntityDTO;
 import com.mindhub.todolist.models.UserEntity;
 import com.mindhub.todolist.repositories.UserEntityRepository;
+import com.mindhub.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,24 +18,19 @@ import java.util.List;
 public class UserEntityController {
 
     @Autowired
-    UserEntityRepository userEntityRepository;
+    private UserService userService;
 
 
     @GetMapping
     public ResponseEntity<?> getAllUsers(){
-        List<UserEntity> users = userEntityRepository.findAll();
-        List<UserEntityDTO> userEntityDTOS = users
-                .stream()
-                .map( user -> new UserEntityDTO(user))
-                .toList();
-        return new ResponseEntity<>(userEntityDTOS, HttpStatus.OK);
+        List<UserEntityDTO> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id){
 
-        UserEntity user = userEntityRepository.findById(id).orElse(null);
-        UserEntityDTO userEntityDTO = new UserEntityDTO(user);
+        UserEntityDTO userEntityDTO = userService.getUserDTObyId(id);
 
         return new ResponseEntity<>(userEntityDTO , HttpStatus.OK);
 
@@ -42,37 +38,25 @@ public class UserEntityController {
     //validation is missing
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody NewUser newUser){
-        UserEntity user = new UserEntity(newUser.username(), newUser.password(), newUser.email());
-        userEntityRepository.save(user);
+
+        UserEntityDTO user = userService.createUser(newUser);
+
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody NewUser newUser){
-        UserEntity user = userEntityRepository.findById(id).orElse(null);
-        if (user == null){
+        if (!userService.userExistById(id)){
             return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
-        user.setUsername(newUser.username());
-        user.setEmail(newUser.email());
-        user.setPassword(newUser.password());
-
-        userEntityRepository.save(user);
-
-
-
-        return new ResponseEntity<>(new UserEntityDTO(user), HttpStatus.OK);
+        UserEntityDTO user = userService.updateUser(id, newUser);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
     // i need to delete the task that the user have firs
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable Long id){
-        UserEntity user = userEntityRepository.findById(id).orElse(null);
-        if (!userEntityRepository.existsById(id)){
-            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
-        }
-        userEntityRepository.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.GONE);
-    }
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<?> deleteUserById(@PathVariable Long id){
+//
+//    }
 
     
 
