@@ -27,6 +27,8 @@ public class TodolistApplication {
 			Task t2 = new Task("Cook", "I need to eat to program better", TaskStatus.PENDING);
 			Task t3 = new Task("Programing", "To be better", TaskStatus.IN_PROGRESS);
 
+			userEntityRepository.save(user1);
+			userEntityRepository.save(user2);
 			user1.addTask(t1);
 			user2.addTask(t2);
 			user2.addTask(t3);
@@ -34,8 +36,7 @@ public class TodolistApplication {
 
 			System.out.println(user1);
 			System.out.println(user2);
-			userEntityRepository.save(user1);
-			userEntityRepository.save(user2);
+
 			taskRepository.save(t1);
 			taskRepository.save(t2);
 			taskRepository.save(t3);

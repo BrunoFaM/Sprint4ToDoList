@@ -1,15 +1,18 @@
 package com.mindhub.todolist.dtos;
 
-import com.mindhub.todolist.models.Task;
 import com.mindhub.todolist.models.UserEntity;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
 public class UserEntityDTO {
 
     private final Long id;
-
-    private final String username, email;
+    @NotBlank(message = "Can't be blank")
+    private final String username;
+    @Email(message = "Has to be an valid email")
+    private final String email;
 
     private final List<TaskDTO> tasks;
 
