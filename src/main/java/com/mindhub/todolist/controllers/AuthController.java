@@ -5,6 +5,7 @@ import com.mindhub.todolist.dtos.LoginRequest;
 import com.mindhub.todolist.dtos.NewUser;
 import com.mindhub.todolist.dtos.UserEntityDTO;
 import com.mindhub.todolist.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/login")
+    @Operation(summary = "log in", description = "return a JWT token if the user exists")
     public ResponseEntity<String> authenticateUser(@RequestBody @Valid LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -46,6 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Register a user", description = "Create a user with Role of user")
     public ResponseEntity<?> registerUser(@RequestBody @Valid NewUser newUser){
         userService.createUser(newUser);
 
