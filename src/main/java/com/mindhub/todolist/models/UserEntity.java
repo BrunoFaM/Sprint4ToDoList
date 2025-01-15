@@ -1,8 +1,7 @@
 package com.mindhub.todolist.models;
 
-import com.mindhub.todolist.dtos.UserEntityDTO;
+import com.mindhub.todolist.models.enums.Role;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,10 +13,14 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username, password, email;
+    private String username, password;
+    @Column(unique = true)
+    private String email;
 
     @OneToMany(mappedBy = "userEntity")
     private Set<Task> tasks = new HashSet<>();
+
+    private Role role = Role.USER;
 
     public UserEntity() {
     }
@@ -71,6 +74,14 @@ public class UserEntity {
         this.tasks = tasks;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "UserEntity{" +
@@ -78,6 +89,7 @@ public class UserEntity {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
                 '}';
     }
 }

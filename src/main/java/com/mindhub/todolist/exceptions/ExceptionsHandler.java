@@ -35,9 +35,16 @@ public class ExceptionsHandler {
     public String handleUserNotFoundException(UserNotFoundException exception){
         return exception.getMessage();
     }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(TaskNotFoundException.class)
     public String handleTaskNotFoundException(TaskNotFoundException exception){
+        return exception.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidEmailException.class)
+    public String handleInvalidEmailException(InvalidEmailException exception){
         return exception.getMessage();
     }
 

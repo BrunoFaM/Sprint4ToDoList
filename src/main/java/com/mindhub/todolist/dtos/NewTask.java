@@ -1,6 +1,6 @@
 package com.mindhub.todolist.dtos;
 
-import com.mindhub.todolist.models.TaskStatus;
+import com.mindhub.todolist.models.enums.TaskStatus;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

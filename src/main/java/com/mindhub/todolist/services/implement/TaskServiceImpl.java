@@ -10,6 +10,7 @@ import com.mindhub.todolist.repositories.TaskRepository;
 import com.mindhub.todolist.services.TaskService;
 import com.mindhub.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,5 +76,55 @@ public class TaskServiceImpl implements TaskService {
         saveTask(task);
         return new TaskDTO(task);
 
+    }
+
+    public List<TaskDTO> getAllTasksCurrent(Authentication authentication) throws UserNotFoundException {
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        return user
+                .getTasks()
+                .stream()
+                .map( task -> new TaskDTO(task))
+                .toList();
+    }
+
+    @Override
+    public TaskDTO updateTaskById(Authentication authentication, Long id, NewTask newTask) throws UserNotFoundException {
+        //get the user
+        //get the tasks pf the user
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        Task task = taskRepository.findByUserEntityAndId(user, id);
+        task.setTitle(newTask.getTitle());
+        task.setDescription(newTask.getDescription());
+        task.setTaskStatus(newTask.getStatus());
+        TaskDTO updateTask = new TaskDTO(taskRepository.save(task));
+
+
+        return updateTask;
+    }
+
+    @Override
+    public TaskDTO getTaskByIdAndCurrent(Authentication authentication, Long id) throws UserNotFoundException {
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        Task task = taskRepository.findByUserEntityAndId(user, id);
+        return new TaskDTO(task);
+    }
+
+    @Override
+    public void deleteTaskByIdAndCurrent(Authentication authentication, Long id) throws UserNotFoundException {
+        // i gonna try with a soft delete first
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        Task task = taskRepository.findByUserEntityAndId(user, id);
+        taskRepository.delete(task);
+    }
+
+    @Override
+    public TaskDTO createTaskCurrent(Authentication authentication, NewTask newTask) throws UserNotFoundException {
+
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        Task task = new Task(newTask.getTitle(), newTask.getDescription(), newTask.getStatus());
+
+        user.addTask(task);
+
+        return new TaskDTO(taskRepository.save(task));
     }
 }

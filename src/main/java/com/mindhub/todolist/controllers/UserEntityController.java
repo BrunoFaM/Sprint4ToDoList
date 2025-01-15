@@ -3,7 +3,6 @@ package com.mindhub.todolist.controllers;
 import com.mindhub.todolist.dtos.NewUser;
 import com.mindhub.todolist.dtos.UserEntityDTO;
 import com.mindhub.todolist.exceptions.UserNotFoundException;
-import com.mindhub.todolist.models.UserEntity;
 import com.mindhub.todolist.services.TaskService;
 import com.mindhub.todolist.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,13 +14,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user/users")
 public class UserEntityController {
 
     @Autowired
@@ -30,73 +28,43 @@ public class UserEntityController {
     @Autowired
     private TaskService taskService;
 
-
-    @GetMapping
-    @Operation(summary = "Get a list of users", description = "Return a list of users or a empty one")
-    public ResponseEntity<?> getAllUsers(){
-        List<UserEntityDTO> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    @GetMapping()
+    @Operation(summary = "get current user info")
+    public ResponseEntity<?> getUserInfo(Authentication authentication) throws UserNotFoundException {
+        UserEntityDTO user = userService.getUser(authentication);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get a user by id", description = "Return a user if it exists")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "OK"),
-                    @ApiResponse(responseCode = "400", description = "Bad request, invalid data.")
-            }
-    )
-    public ResponseEntity<?> getUserById(@PathVariable @Parameter(description = "User Id") Long id) throws UserNotFoundException {
 
-        UserEntityDTO userEntityDTO = userService.getUserDTObyId(id);
-
-        return new ResponseEntity<>(userEntityDTO , HttpStatus.OK);
-
-    }
     //validation is missing
-    @PostMapping
-    @Operation(summary = "Create a user", description = "Return the new user")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "201", description = "Created"),
-                    @ApiResponse(responseCode = "400", description = "Bad request, invalid data.")
-            }
-    )
-    public ResponseEntity<?> createUser(@RequestBody @Schema(exampleClasses = NewUser.class) @Valid NewUser newUser){
-
-        UserEntityDTO user = userService.createUser(newUser);
-
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    @Operation(summary = "Update a user", description = "Return the update task if it exist")
+    @PutMapping()
+    @Operation(summary = "Update current user info", description = "Return the update info")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Updated"),
                     @ApiResponse(responseCode = "400", description = "Bad request, invalid data.")
             }
     )
-    public ResponseEntity<?> updateUser(@PathVariable @Parameter(description = "User Id") Long id, @RequestBody @Schema(exampleClasses = NewUser.class) @Valid NewUser newUser) throws UserNotFoundException {
+    public ResponseEntity<?> updateUser(Authentication authentication, @RequestBody @Schema(exampleClasses = NewUser.class) @Valid NewUser newUser) throws UserNotFoundException {
 
-        UserEntityDTO user = userService.updateUser(id, newUser);
+        UserEntityDTO user = userService.updateCurrentUser(authentication, newUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-    // i need to delete the task that the user have firs
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a user and their tasks", description = "Delete the user and all their tasks if it exists")
+
+
+    @DeleteMapping()
+    @Operation(summary = "Delete a current user", description = "Delete the current user and their tasks")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Deleted"),
                     @ApiResponse(responseCode = "400", description = "Bad request, invalid data.")
             }
     )
-    public ResponseEntity<?> deleteUserById(@PathVariable @Parameter(description = "User Id") Long id) throws UserNotFoundException {
-        userService.deleteUserById(id);
+    public ResponseEntity<?> deleteUserById(Authentication authentication) throws UserNotFoundException {
+        userService.deleteCurrentUser(authentication);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    
 
 
 }

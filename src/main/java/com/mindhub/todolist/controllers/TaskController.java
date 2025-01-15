@@ -2,26 +2,25 @@ package com.mindhub.todolist.controllers;
 
 import com.mindhub.todolist.dtos.NewTask;
 import com.mindhub.todolist.dtos.TaskDTO;
-import com.mindhub.todolist.exceptions.TaskNotFoundException;
+
 import com.mindhub.todolist.exceptions.UserNotFoundException;
 import com.mindhub.todolist.services.TaskService;
 import com.mindhub.todolist.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/api/user/tasks")
 public class TaskController {
 
 
@@ -32,72 +31,43 @@ public class TaskController {
     private UserService userService;
 
     @GetMapping
-    @Operation(summary = "Get a list of tasks", description = "Return a list of tasks or a empty one")
-    public ResponseEntity<?> getAllTasks(){
-        List<TaskDTO> tasks = taskService.getAllTasks();
+    @Operation(summary = "Get al the tasks of the current user")
+    public ResponseEntity<?> getAllTasksCurrent(Authentication authentication) throws UserNotFoundException {
+        List<TaskDTO> tasks = taskService.getAllTasksCurrent(authentication);
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
-
-    @PostMapping("/{id}")
-    @Operation(summary = "Create a task", description = "Return the new task")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "201", description = "Created"),
-                    @ApiResponse(responseCode = "400", description = "Bad request, invalid data.")
-            }
-    )
-    public ResponseEntity<?> createTask(@PathVariable @Parameter(description = "User Id") Long id, @RequestBody @Schema(exampleClasses = NewTask.class) @Valid NewTask taskDTO) throws UserNotFoundException {
-
-        TaskDTO task = taskService.createTask(taskDTO, id);
-
-        return new ResponseEntity<>(task, HttpStatus.CREATED);
-
+    @GetMapping("/{id}")
+    @Operation(summary = "Get task by Id")
+    public ResponseEntity<?> getTaskByIdAndCurrent(Authentication authentication, @PathVariable Long id) throws UserNotFoundException {
+        TaskDTO task = taskService.getTaskByIdAndCurrent(authentication, id);
+        return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get a task by id", description = "Return a task if it exists")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "OK"),
-                    @ApiResponse(responseCode = "400", description = "Bad request, invalid data.")
-            }
-    )
-    public ResponseEntity<?> getTaskById(@PathVariable @Parameter(description = "Task Id") Long id) throws TaskNotFoundException {
+    @PostMapping()
+    @Operation(summary = "Create a task")
+    public ResponseEntity<?> createTaskCurrent(Authentication authentication, @RequestBody @Schema(exampleClasses = NewTask.class) @Valid NewTask newTask) throws UserNotFoundException {
 
-        TaskDTO task = taskService.getTaskById(id);
+        TaskDTO task = taskService.createTaskCurrent(authentication, newTask);
 
-        return new ResponseEntity<>(task, HttpStatus.OK);
+        return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update a task", description = "Return the update task if it exist")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Updated"),
-                    @ApiResponse(responseCode = "400", description = "Bad request, invalid data.")
-            }
-    )
-    public ResponseEntity<?> updateTaskById(@PathVariable @Parameter(description = "Task id") Long id,  @RequestBody @Schema(exampleClasses = NewTask.class) @Valid NewTask taskDTO) throws TaskNotFoundException {
+    @Operation(summary = "Update a task", description = "Return the update task")
+    public ResponseEntity<?> updateTask(Authentication authentication, @PathVariable @Parameter(description = "Task Id") Long id,@RequestBody @Schema(exampleClasses = NewTask.class) @Valid NewTask newTask) throws UserNotFoundException {
 
-        TaskDTO task = taskService.updateTaskById(id, taskDTO);
-
-        return new ResponseEntity<>(task, HttpStatus.OK);
+        TaskDTO task = taskService.updateTaskById(authentication, id, newTask);
+        return  new ResponseEntity<>(task, HttpStatus.OK);
     }
 
+    //i want to make a soft delete, implement is missing
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a task", description = "Delete the task if it exist")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "204", description = "Deleted"),
-                    @ApiResponse(responseCode = "400", description = "Bad request, invalid data.")
-            }
-    )
-    public ResponseEntity<?> deleteTaskById(@PathVariable @Parameter(description = "Task id") Long id){
-
-        taskService.deleteTaskById(id);
+    @Operation(summary = "Delete a task by id", description = "Delete the task if it exist")
+    public ResponseEntity<?> deleteTaskByIdCurrent(Authentication authentication, @PathVariable @Parameter(description = "Task id") Long id) throws UserNotFoundException {
+        taskService.deleteTaskByIdAndCurrent(authentication, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
+
 
 }
