@@ -27,7 +27,6 @@ public class ExceptionsHandler {
             errorMap.put(error.getField(), error.getDefaultMessage());
         });
         return errorMap;
-
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

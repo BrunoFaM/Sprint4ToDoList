@@ -43,7 +43,6 @@ public class TodolistApplication {
 			user2.addTask(t2);
 			user2.addTask(t3);
 
-
 			System.out.println(user1);
 			System.out.println(user2);
 

@@ -16,10 +16,7 @@ public class TaskDTO {
     private TaskStatus status;
 
     public TaskDTO(){
-
     }
-
-
     public TaskDTO(String title, String description, TaskStatus taskStatus){
         this.title = title;
         this.description = description;
