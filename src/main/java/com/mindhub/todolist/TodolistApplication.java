@@ -16,44 +16,44 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class TodolistApplication {
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	//@Autowired
+	//private PasswordEncoder passwordEncoder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(TodolistApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner initData(UserEntityRepository userEntityRepository, TaskRepository taskRepository){
-		return args -> {
-
-			UserEntity user1 = new UserEntity("el 10", passwordEncoder.encode("dwadawd"), "ewdawd");
-			UserEntity user2 = new UserEntity("Niki", passwordEncoder.encode("din42848790"), "brunomoron56@gmail.com");
-			UserEntity user3 = new UserEntity("admin", passwordEncoder.encode("admin"),"admin@gmail.com");
-			user3.setRole(Role.ADMIN);
-			Task t1 = new Task("Clean", "clean the setup", TaskStatus.COMPLETED);
-			Task t2 = new Task("Cook", "I need to eat to program better", TaskStatus.PENDING);
-			Task t3 = new Task("Programing", "To be better", TaskStatus.IN_PROGRESS);
-
-
-			userEntityRepository.save(user1);
-			userEntityRepository.save(user2);
-			userEntityRepository.save(user3);
-			user1.addTask(t1);
-			user2.addTask(t2);
-			user2.addTask(t3);
-
-			System.out.println(user1);
-			System.out.println(user2);
-
-			taskRepository.save(t1);
-			taskRepository.save(t2);
-			taskRepository.save(t3);
-			System.out.println(user1);
-			System.out.println(user2);
-			System.out.println(user3);
-
-		};
-	}
+	//@Bean
+	//CommandLineRunner initData(UserEntityRepository userEntityRepository, TaskRepository taskRepository){
+//		return args -> {
+//
+//			UserEntity user1 = new UserEntity("el 10", passwordEncoder.encode("dwadawd"), "ewdawd");
+//			UserEntity user2 = new UserEntity("Niki", passwordEncoder.encode("din42848790"), "brunomoron56@gmail.com");
+//			UserEntity user3 = new UserEntity("admin", passwordEncoder.encode("admin"),"admin@gmail.com");
+//			user3.setRole(Role.ADMIN);
+//			Task t1 = new Task("Clean", "clean the setup", TaskStatus.COMPLETED);
+//			Task t2 = new Task("Cook", "I need to eat to program better", TaskStatus.PENDING);
+//			Task t3 = new Task("Programing", "To be better", TaskStatus.IN_PROGRESS);
+//
+//
+//			userEntityRepository.save(user1);
+//			userEntityRepository.save(user2);
+//			userEntityRepository.save(user3);
+//			user1.addTask(t1);
+//			user2.addTask(t2);
+//			user2.addTask(t3);
+//
+//			System.out.println(user1);
+//			System.out.println(user2);
+//
+//			taskRepository.save(t1);
+//			taskRepository.save(t2);
+//			taskRepository.save(t3);
+//			System.out.println(user1);
+//			System.out.println(user2);
+//			System.out.println(user3);
+//
+//		};
+	//}
 
 }
