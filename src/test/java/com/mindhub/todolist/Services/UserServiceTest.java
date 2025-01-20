@@ -32,8 +32,8 @@ public class UserServiceTest {
     @Test
     public void testSaveUser() {
         //Arrange
-        UserEntity user = new UserEntity("bruno", "12345", "bruno@gmail.com");
-        NewUser newUser = new NewUser("bruno", "12345", "bruno@gmail.com");
+        UserEntity user = new UserEntity("string", "12345", "string@gmail.com");
+        NewUser newUser = new NewUser("string", "12345", "string@gmail.com");
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.save(user)).thenReturn(user);
 
@@ -42,17 +42,16 @@ public class UserServiceTest {
 
 
         //Assert
-        Assertions.assertThat(userCreated.getEmail()).isEqualTo("bruno@gmail.com");
-        Assertions.assertThat(userCreated.getUsername()).isEqualTo("bruno");
+        Assertions.assertThat(userCreated.getEmail()).isEqualTo("string@gmail.com");
+        Assertions.assertThat(userCreated.getUsername()).isEqualTo("string");
 
     }
 
     @Test
     public void testFindUserById() {
         //Arrange
-        UserEntity user = new UserEntity("bruno", "12345", "bruno@gmail.com");
-        NewUser newUser = new NewUser("bruno", "12345", "bruno@gmail.com");
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        UserEntity user = new UserEntity("string", "12345", "string@gmail.com");
+        NewUser newUser = new NewUser("string", "12345", "string@gmail.com");
         when(userRepository.save(user)).thenReturn(user);
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
@@ -71,6 +70,8 @@ public class UserServiceTest {
         //Assert
         Assertions.assertThat(foundUser).isNotNull();
         Assertions.assertThat(foundUser.getId()).isEqualTo(user.getId());
+        Assertions.assertThat(foundUser.getUsername()).isEqualTo(user.getUsername());
+        Assertions.assertThat(foundUser.getEmail()).isEqualTo(user.getEmail());
 
     }
 
