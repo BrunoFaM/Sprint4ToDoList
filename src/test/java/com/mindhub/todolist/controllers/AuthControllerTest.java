@@ -73,7 +73,6 @@ public class AuthControllerTest {
             MvcResult result = mockMvc.perform(post("/api/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(requestBody)).andExpect(status().isOk()).andReturn();
-            System.out.println(result.getResponse().getContentAsString());
             Assertions.assertThat(result.getResponse().getContentAsString()).isNotBlank();
             Assertions.assertThat(result.getResponse().getContentAsString()).isNotNull();
             Assertions.assertThat(result.getResponse().getContentAsString()).isGreaterThan("32");

@@ -61,63 +61,17 @@ public class AdminTasksControllerTest {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @MockitoBean
-    private UserService userService;
-
-    @Autowired
-    private UserEntityRepository userEntityRepository;
-
 
     @MockitoBean
     private TaskService taskService;
 
-//    private UserEntity user;
-
-//    @BeforeEach
-//    void setUp(){
-//        user = new UserEntity("string", "2334" ,"string@gmail.com");
-//        user.setRole(Role.ADMIN);
-//        user = userEntityRepository.save(user);
-        //userService.createUser(new NewUser("example", "1234", "user@gmail.com"));
-
-    //}
-
-//    @Test
-//    //@WithMockUser(username = "user", roles = {"USER"})
-//    public void testPostTask() throws Exception {
-//        NewTask newTask = new NewTask("work", "at 7 am", TaskStatus.PENDING);
-//        TaskDTO taskDTO = new TaskDTO("work", "at 7 am", TaskStatus.PENDING);
-//
-//        //given(taskService.createTask(ArgumentMatchers.any(), anyLong())).willAnswer(invocationOnMock -> invocationOnMock.getArguments());
-//        when(taskService.createTask(any(NewTask.class), anyLong())).thenReturn(taskDTO);
-//        String requestBody = "{\"title\" : \"work\", \"description\" : \"at 7 am\", \"status\" : \"PENDING\"}";
-//
-//        String jwtToken = jwtUtils.generateToken("string@gmail.com");
-//        mockMvc.perform(post("/api/admin/task/1")
-//                        .header("Authorization", "Bearer " + jwtToken)
-//                        .queryParam("id", "1")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(requestBody))
-//                        .andExpect(status().isCreated());
-//
-//    }
 
     @Test
     @WithMockUser(username = "user@gmail.com",  authorities = {"ADMIN"})
     public void testPostTask() throws Exception {
-        Authentication aut = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(aut);
-        //System.out.println(user.getId());
-        NewTask newTask = new NewTask("work", "at 7 am", TaskStatus.PENDING);
-        TaskDTO taskDTO = new TaskDTO("work", "at 7 am", TaskStatus.PENDING);
 
-
-        when(taskService.createTask(any(NewTask.class), anyLong())).thenReturn(taskDTO);
-        when(userService.getUserById(any())).thenReturn(new UserEntity());
-        when(taskService.saveTask(any(Task.class))).thenReturn(new Task());
         String requestBody = "{\"title\": \"work\", \"description\": \"at 7 am\", \"status\": \"PENDING\"}";
-        //UserEntityDTO userEntityDTO =userService.getUserDTObyId(1L);
-        //System.out.println(userEntityDTO);
+
 
         String jwtToken = jwtUtils.generateToken("user@gmail.com");
         mockMvc.perform(post("/api/admin/tasks/1")
@@ -135,7 +89,6 @@ public class AdminTasksControllerTest {
         List<TaskDTO> tasks = List.of();
 
         try {
-            when(taskService.getAllTasks()).thenReturn(tasks);
             //Act - Assert
             String jwtToken = jwtUtils.generateToken("user@gmail.com");
             MvcResult result = mockMvc.perform(get("/api/admin/tasks")

@@ -93,7 +93,7 @@ public class TaskControllerTest {
         List<TaskDTO> tasks = List.of();
 
         try {
-            when(taskService.getAllTasksCurrent(any())).thenReturn(tasks);
+            //when(taskService.getAllTasksCurrent(any())).thenReturn(tasks);
             //Act - Assert
             String jwtToken = jwtUtils.generateToken("user@gmail.com");
             MvcResult result = mockMvc.perform(get("/api/user/tasks")
@@ -136,9 +136,9 @@ public class TaskControllerTest {
 
         try {
             String jwtToken = jwtUtils.generateToken("user@gmail.com");
-            when(userService.getUserByEmail(any())).thenReturn(new UserEntity());
-            when(taskRepository.findByUserEntityAndId(any(), anyLong())).thenReturn(new Task());
-            when(taskRepository.save(any())).thenReturn(new Task());
+            //when(userService.getUserByEmail(any())).thenReturn(new UserEntity());
+            //when(taskRepository.findByUserEntityAndId(any(), anyLong())).thenReturn(new Task());
+            //when(taskRepository.save(any())).thenReturn(new Task());
             //doNothing().when(taskService.deleteTaskByIdAndCurrent(any(), anyLong()));
 
             mockMvc.perform(delete("/api/user/tasks/1")
