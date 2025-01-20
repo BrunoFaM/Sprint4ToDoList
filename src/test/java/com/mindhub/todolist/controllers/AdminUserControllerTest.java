@@ -89,7 +89,7 @@ public class AdminUserControllerTest {
 
     @Test
     @WithMockUser(username = username,  authorities = {"ADMIN"})
-    public void testPostTask() throws Exception {
+    public void testPostNewUser() throws Exception {
 
         String requestBody = "{\"username\": \"string\", \"password\": \"23245\", \"email\": \"string@gmail.com\"}";
 

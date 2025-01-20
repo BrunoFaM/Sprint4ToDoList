@@ -65,15 +65,23 @@ public class AdminTasksControllerTest {
     @MockitoBean
     private TaskService taskService;
 
+    private final String username = "user@gmail.com";
+
+    private String jwtToken;
+
+    @BeforeEach
+    void setUp(){
+        jwtToken = jwtUtils.generateToken(username);
+    }
+
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"ADMIN"})
+    @WithMockUser(username = username,  authorities = {"ADMIN"})
     public void testPostTask() throws Exception {
-
+        //Arrange
         String requestBody = "{\"title\": \"work\", \"description\": \"at 7 am\", \"status\": \"PENDING\"}";
 
-
-        String jwtToken = jwtUtils.generateToken("user@gmail.com");
+        //Act - Assert
         mockMvc.perform(post("/api/admin/tasks/1")
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +90,7 @@ public class AdminTasksControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"ADMIN"})
+    @WithMockUser(username = username,  authorities = {"ADMIN"})
     public void testGetAllTask(){
 
         //Arrange
@@ -90,7 +98,6 @@ public class AdminTasksControllerTest {
 
         try {
             //Act - Assert
-            String jwtToken = jwtUtils.generateToken("user@gmail.com");
             MvcResult result = mockMvc.perform(get("/api/admin/tasks")
                     .header("Authorization", "Bearer " + jwtToken)
             ).andExpect(status().isOk()).andReturn();
@@ -103,11 +110,10 @@ public class AdminTasksControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"ADMIN"})
+    @WithMockUser(username = username,  authorities = {"ADMIN"})
     public void testGetById(){
         //Arrange
         try {
-            String jwtToken = jwtUtils.generateToken("user@gmail.com");
             TaskDTO task = new TaskDTO("example", "example", TaskStatus.PENDING);
             when(taskService.getTaskById(anyLong())).thenReturn(task);
 
@@ -117,20 +123,17 @@ public class AdminTasksControllerTest {
             ).andExpect(status().isOk()).andReturn();
 
 
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"ADMIN"})
+    @WithMockUser(username = username,  authorities = {"ADMIN"})
     public void testDeleteById(){
         //Arrange
 
         try {
-            String jwtToken = jwtUtils.generateToken("user@gmail.com");
             mockMvc.perform(delete("/api/admin/tasks/1")
                             .header("Authorization", "Bearer " + jwtToken)
                     )
@@ -142,13 +145,14 @@ public class AdminTasksControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"ADMIN"})
+    @WithMockUser(username = username,  authorities = {"ADMIN"})
     public void testUpdate(){
 
         try {
-            String jwtToken = jwtUtils.generateToken("user@gmail.com");
+            //Arange
             when(taskService.updateTaskById(any(), anyLong(), any())).thenReturn(new TaskDTO());
             String requestBody = "{\"title\": \"work\", \"description\": \"at 7 am\", \"status\": \"PENDING\"}";
+            //Act - Assert
             mockMvc.perform(put("/api/admin/tasks/1")
                             .header("Authorization", "Bearer " + jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)

@@ -13,6 +13,7 @@ import com.mindhub.todolist.services.TaskService;
 import com.mindhub.todolist.services.UserService;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,33 +50,31 @@ public class TaskControllerTest {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @MockitoBean
-    private UserService userService;
-
-    @Autowired
-    private UserEntityRepository userEntityRepository;
-
-    @MockitoBean
-    private TaskRepository taskRepository;
-
 
     @MockitoBean
     private TaskService taskService;
 
+    private final String username = "user@gmail.com";
+
+    private String jwtToken;
+
+    @BeforeEach
+    void setUp(){
+        jwtToken = jwtUtils.generateToken(username);
+    }
+
 
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"USER"})
+    @WithMockUser(username = username,  authorities = {"USER"})
     public void testPostTask() throws Exception {
         //Arrange
         TaskDTO taskDTO = new TaskDTO("work", "at 7 am", TaskStatus.PENDING);
 
-        when(taskService.createTask(any(NewTask.class), anyLong())).thenReturn(taskDTO);
-        when(userService.getUserById(any())).thenReturn(new UserEntity());
-        when(taskService.saveTask(any(Task.class))).thenReturn(new Task());
+        //when(taskService.createTask(any(NewTask.class), anyLong())).thenReturn(taskDTO);
+        //when(userService.getUserById(any())).thenReturn(new UserEntity());
+        //when(taskService.saveTask(any(Task.class))).thenReturn(new Task());
         String requestBody = "{\"title\": \"work\", \"description\": \"at 7 am\", \"status\": \"PENDING\"}";
-
-        String jwtToken = jwtUtils.generateToken("user@gmail.com");
 
         //Act - Assert
         mockMvc.perform(post("/api/user/tasks")
@@ -86,16 +85,14 @@ public class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"USER"})
+    @WithMockUser(username = username,  authorities = {"USER"})
     public void testGetAllTask(){
 
         //Arrange
         List<TaskDTO> tasks = List.of();
 
         try {
-            //when(taskService.getAllTasksCurrent(any())).thenReturn(tasks);
             //Act - Assert
-            String jwtToken = jwtUtils.generateToken("user@gmail.com");
             MvcResult result = mockMvc.perform(get("/api/user/tasks")
                     .header("Authorization", "Bearer " + jwtToken)
             ).andExpect(status().isOk()).andReturn();
@@ -108,11 +105,10 @@ public class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"USER"})
+    @WithMockUser(username = username,  authorities = {"USER"})
     public void testGetById(){
         //Arrange
         try {
-            String jwtToken = jwtUtils.generateToken("user@gmail.com");
             TaskDTO task = new TaskDTO("example", "example", TaskStatus.PENDING);
             when(taskService.getTaskByIdAndCurrent(any(), anyLong())).thenReturn(task);
 
@@ -130,16 +126,12 @@ public class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"USER"})
+    @WithMockUser(username = username,  authorities = {"USER"})
     public void testDelete(){
         //Arrange
 
         try {
-            String jwtToken = jwtUtils.generateToken("user@gmail.com");
-            //when(userService.getUserByEmail(any())).thenReturn(new UserEntity());
-            //when(taskRepository.findByUserEntityAndId(any(), anyLong())).thenReturn(new Task());
-            //when(taskRepository.save(any())).thenReturn(new Task());
-            //doNothing().when(taskService.deleteTaskByIdAndCurrent(any(), anyLong()));
+
 
             mockMvc.perform(delete("/api/user/tasks/1")
                             .header("Authorization", "Bearer " + jwtToken)
@@ -152,7 +144,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@gmail.com",  authorities = {"USER"})
+    @WithMockUser(username = username,  authorities = {"USER"})
     public void testUpdate(){
 
         try {

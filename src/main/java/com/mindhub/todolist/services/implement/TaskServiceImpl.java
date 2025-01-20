@@ -40,7 +40,8 @@ public class TaskServiceImpl implements TaskService {
 
         Task task = new Task(taskDTO.getTitle(), taskDTO.getDescription(),taskDTO.getStatus());
         user.addTask(task);
-        return new TaskDTO(saveTask(task));
+        Task savedTask = saveTask(task);
+        return new TaskDTO(savedTask);
     }
 
     public TaskDTO getTaskById(Long id) throws TaskNotFoundException {
